@@ -1,0 +1,11 @@
+<div class="actions-bar">
+  <button mat-stroked-button color="primary" (click)="onAlterar()" [disabled]="!store.canAlterarOuExcluir()">
+    Alterar
+  </button>
+  <button mat-stroked-button color="warn" (click)="onExcluir()" [disabled]="!store.canAlterarOuExcluir()">
+    Excluir
+  </button>
+  <button mat-stroked-button color="accent" (click)="onVisualizar()" [disabled]="!store.canAlterarOuExcluir()">
+    Visualizar
+  </button>
+</div>
