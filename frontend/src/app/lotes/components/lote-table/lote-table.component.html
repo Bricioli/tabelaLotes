@@ -1,0 +1,63 @@
+<div class="table-wrapper">
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let lote">
+        <mat-checkbox
+          [checked]="isSelected(lote)"
+          (change)="toggleSelection(lote)"
+          aria-label="Selecionar lote"
+        ></mat-checkbox>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="codigoLote">
+      <th mat-header-cell *matHeaderCellDef>ID Lote</th>
+      <td mat-cell *matCellDef="let lote">{{ lote.codigoLote }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="dataCriacao">
+      <th mat-header-cell *matHeaderCellDef>Data Entrada</th>
+      <td mat-cell *matCellDef="let lote">{{ lote.dataCriacao | date: 'dd/MM/yyyy' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="valor">
+      <th mat-header-cell *matHeaderCellDef>Valor</th>
+      <td mat-cell *matCellDef="let lote">{{ lote.valor | currency: 'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="quantidadeItens">
+      <th mat-header-cell *matHeaderCellDef>Quant. Itens</th>
+      <td mat-cell *matCellDef="let lote">{{ lote.quantidadeItens }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="situacao">
+      <th mat-header-cell *matHeaderCellDef>Situação Lote</th>
+      <td mat-cell *matCellDef="let lote">
+        <span
+          class="situacao-badge"
+          [ngClass]="getBadgeClass(lote.situacao)"
+        >
+          {{ lote.situacao }}
+        </span>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      [class.selected-row]="isSelected(row)"
+      (click)="toggleSelection(row)"
+    ></tr>
+  </table>
+
+  <mat-paginator
+    [length]="store.totalElementos()"
+    [pageSize]="10"
+    [pageIndex]="store.paginaAtual() - 1"
+    [pageSizeOptions]="[10]"
+    (page)="pageChanged($event)"
+  ></mat-paginator>
+</div>
