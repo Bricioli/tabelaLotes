@@ -1,0 +1,45 @@
+{
+  "root": true,
+  "ignorePatterns": ["node_modules/", "dist/", "out-tsc/", ".angular/"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": ["./frontend/tsconfig.app.json", "./bff/tsconfig.json"],
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
+  ],
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/explicit-function-return-type": [
+      "error",
+      {
+        "allowExpressions": true,
+        "allowTypedFunctionExpressions": true
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["frontend/src/**/*.ts"],
+      "excludedFiles": ["**/*.{repository,service}.ts", "**/*.spec.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "@angular/common/http",
+                "importNames": ["HttpClient"],
+                "message": "HttpClient must only be used in Repository or Service layers."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+services:
+  bff:
+    build: ./bff
+    ports:
+      - '3000:3000'
+    environment:
+      LATENCY_MS: 3000
+      FAILURE_RATE: 0.2
+      PORT: 3000
+    networks:
+      - tabela-lotes-net
+
+  frontend:
+    build: ./frontend
+    ports:
+      - '4200:80'
+    depends_on:
+      - bff
+    networks:
+      - tabela-lotes-net
+
+networks:
+  tabela-lotes-net:
+    driver: bridge

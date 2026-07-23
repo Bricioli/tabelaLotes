@@ -1,0 +1,27 @@
+{
+  "name": "tabela-lotes",
+  "private": true,
+  "scripts": {
+    "prepare": "husky",
+    "lint": "eslint \"frontend/src/**/*.ts\" \"bff/src/**/*.ts\"",
+    "lint:fix": "eslint \"frontend/src/**/*.ts\" \"bff/src/**/*.ts\" --fix",
+    "format": "prettier --write \"**/*.{ts,js,json,md,yml,yaml,html,scss}\""
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
+    "eslint": "^8.57.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
+    "prettier": "^3.8.1"
+  },
+  "lint-staged": {
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml,html,scss}": [
+      "prettier --write"
+    ]
+  }
+}
