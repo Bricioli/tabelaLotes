@@ -1,0 +1,1 @@
+{"version":3,"file":"lotes.routes.js","sourceRoot":"","sources":["../../src/routes/lotes.routes.ts"],"names":[],"mappings":";;AAAA,qCAAiC;AACjC,sEAA8G;AAE9G,MAAM,MAAM,GAAG,IAAA,gBAAM,GAAE,CAAC;AAExB,MAAM,CAAC,GAAG,CAAC,GAAG,EAAE,mCAAgB,CAAC,CAAC;AAClC,MAAM,CAAC,GAAG,CAAC,MAAM,EAAE,oCAAiB,CAAC,CAAC;AACtC,MAAM,CAAC,IAAI,CAAC,cAAc,EAAE,yCAAsB,CAAC,CAAC;AAEpD,kBAAe,MAAM,CAAC"}

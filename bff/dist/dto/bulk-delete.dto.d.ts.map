@@ -1,0 +1,1 @@
+{"version":3,"file":"bulk-delete.dto.d.ts","sourceRoot":"","sources":["../../src/dto/bulk-delete.dto.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,aAAa;IAC5B,GAAG,EAAE,MAAM,EAAE,CAAC;CACf;AAID,eAAO,MAAM,mBAAmB,SACxB,OAAO,KACZ;IAAE,GAAG,CAAC,EAAE,aAAa,CAAC;IAAC,MAAM,EAAE,MAAM,EAAE,CAAA;CAoCzC,CAAC"}
