@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseUpdateLoteBody = void 0;
-const allowedSituacoes = ['ATIVO', 'PROCESSANDO', 'CANCELADO', 'CONCLUIDO'];
+const allowedSituacoes = ['ABERTO', 'ENVIADO', 'CONFIRMADO'];
 const isNumberValue = (value) => typeof value === 'number' && Number.isFinite(value);
 const parseUpdateLoteBody = (body) => {
     const errors = [];

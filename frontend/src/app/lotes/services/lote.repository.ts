@@ -6,6 +6,16 @@ import { mergeMap, retryWhen } from 'rxjs/operators';
 import { LoteFilter, loteFilterDefault } from '../models/lote-filter.model';
 import { LoteSituacao, LotesPage } from '../models/lote.model';
 
+export type LoteSortField =
+  | 'id'
+  | 'dataCriacao'
+  | 'valor'
+  | 'quantidadeLancamentos'
+  | 'usuarioRegistro'
+  | 'usuarioAprovacao'
+  | 'situacao'
+  | 'dataHoraSituacaoLote';
+
 const MAX_RETRY_ATTEMPTS = 2;
 const BACKOFF_BASE_MS = 300;
 
@@ -15,15 +25,33 @@ export class LoteRepository {
 
   constructor(private readonly http: HttpClient) {}
 
-  searchLotes(filter: LoteFilter = loteFilterDefault, page = 1, limit = 10): Observable<LotesPage> {
+  searchLotes(
+    filter: LoteFilter = loteFilterDefault,
+    page = 1,
+    limit = 10,
+    sortField?: LoteSortField,
+    sortDirection?: 'asc' | 'desc'
+  ): Observable<LotesPage> {
     let params = new HttpParams().set('page', String(page)).set('limit', String(limit));
 
-    if (filter.codigoLote) {
-      params = params.set('codigoLote', filter.codigoLote);
+    if (filter.instituicaoResponsavel) {
+      params = params.set('instituicaoResponsavel', filter.instituicaoResponsavel);
     }
 
-    if (filter.situacao && filter.situacao !== 'TODAS') {
-      params = params.set('situacao', filter.situacao);
+    if (filter.instituicao) {
+      params = params.set('instituicao', filter.instituicao);
+    }
+
+    if (filter.situacaoLote && filter.situacaoLote !== 'TODAS') {
+      params = params.set('situacao', filter.situacaoLote);
+    }
+
+    if (filter.idLoteMin != null) {
+      params = params.set('idLoteMin', String(filter.idLoteMin));
+    }
+
+    if (filter.idLoteMax != null) {
+      params = params.set('idLoteMax', String(filter.idLoteMax));
     }
 
     if (filter.valorMinimo != null) {
@@ -34,12 +62,20 @@ export class LoteRepository {
       params = params.set('valorMaximo', String(filter.valorMaximo));
     }
 
-    if (filter.dataInicio) {
-      params = params.set('dataInicio', filter.dataInicio);
+    if (filter.dataEntradaInicio) {
+      params = params.set('dataEntradaInicio', filter.dataEntradaInicio);
     }
 
-    if (filter.dataFim) {
-      params = params.set('dataFim', filter.dataFim);
+    if (filter.dataEntradaFim) {
+      params = params.set('dataEntradaFim', filter.dataEntradaFim);
+    }
+
+    if (sortField) {
+      params = params.set('sortBy', sortField);
+    }
+
+    if (sortDirection) {
+      params = params.set('sortDirection', sortDirection);
     }
 
     return this.http

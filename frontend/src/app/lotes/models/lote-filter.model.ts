@@ -1,14 +1,17 @@
 import { LoteSituacao } from './lote.model';
 
 export interface LoteFilter {
-  codigoLote?: string;
-  situacao?: LoteSituacao;
+  instituicaoResponsavel?: string;
+  instituicao?: string;
+  situacaoLote?: LoteSituacao;
+  idLoteMin?: number;
+  idLoteMax?: number;
   valorMinimo?: number;
   valorMaximo?: number;
-  dataInicio?: string;
-  dataFim?: string;
+  dataEntradaInicio?: string;
+  dataEntradaFim?: string;
 }
 
 export const loteFilterDefault: LoteFilter = {
-  situacao: 'TODAS'
+  situacaoLote: 'TODAS',
 };

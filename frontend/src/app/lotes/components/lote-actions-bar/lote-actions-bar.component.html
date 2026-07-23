@@ -1,11 +1,17 @@
 <div class="actions-bar">
-  <button mat-stroked-button color="primary" (click)="onAlterar()" [disabled]="!store.canAlterarOuExcluir()">
+  <button mat-flat-button color="primary" type="button" (click)="onConfirmar()">Confirmar</button>
+  <button mat-flat-button color="primary" type="button" (click)="onEnviar()">Enviar</button>
+  <button mat-flat-button color="primary" type="button" (click)="onVisualizarJustificativa()">
+    Visualizar Justificativa
+  </button>
+  <button mat-stroked-button color="accent" type="button" (click)="onIncluir()">Incluir</button>
+  <button mat-stroked-button color="primary" type="button" (click)="onAlterar()" [disabled]="!store.canAlterarOuExcluir()">
     Alterar
   </button>
-  <button mat-stroked-button color="warn" (click)="onExcluir()" [disabled]="!store.canAlterarOuExcluir()">
+  <button mat-stroked-button color="warn" type="button" (click)="onExcluir()" [disabled]="!store.canAlterarOuExcluir()">
     Excluir
   </button>
-  <button mat-stroked-button color="accent" (click)="onVisualizar()" [disabled]="!store.canAlterarOuExcluir()">
+  <button mat-stroked-button color="accent" type="button" (click)="onVisualizar()" [disabled]="!store.canAlterarOuExcluir()">
     Visualizar
   </button>
 </div>

@@ -15,27 +15,40 @@ import { LoteStore } from '../../store/lote.store';
 export class LoteActionsBarComponent {
   constructor(public readonly store: LoteStore) {}
 
+  onConfirmar(): void {
+    console.log('Confirmar ação de lote');
+  }
+
+  onEnviar(): void {
+    console.log('Enviar lote');
+  }
+
+  onVisualizarJustificativa(): void {
+    console.log('Visualizar justificativa');
+  }
+
+  onIncluir(): void {
+    console.log('Incluir lote');
+  }
+
   onAlterar(): void {
-    const selected = this.store.itemSelecionado();
-    if (!selected) {
+    if (!this.store.canAlterarOuExcluir()) {
       return;
     }
-    console.log('Alterar lote', selected);
+    console.log('Alterar lote selecionado');
   }
 
   onExcluir(): void {
-    const selected = this.store.itemSelecionado();
-    if (!selected) {
+    if (!this.store.canAlterarOuExcluir()) {
       return;
     }
-    console.log('Excluir lote', selected);
+    console.log('Excluir lote selecionado');
   }
 
   onVisualizar(): void {
-    const selected = this.store.itemSelecionado();
-    if (!selected) {
+    if (!this.store.canAlterarOuExcluir()) {
       return;
     }
-    console.log('Visualizar lote', selected);
+    console.log('Visualizar lote selecionado');
   }
 }

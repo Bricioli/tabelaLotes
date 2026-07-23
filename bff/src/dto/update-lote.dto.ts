@@ -6,7 +6,7 @@ export interface UpdateLoteDto {
   quantidadeItens?: number;
 }
 
-const allowedSituacoes: SituacaoLote[] = ['ATIVO', 'PROCESSANDO', 'CANCELADO', 'CONCLUIDO'];
+const allowedSituacoes: SituacaoLote[] = ['ABERTO', 'ENVIADO', 'CONFIRMADO'];
 
 const isNumberValue = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
 
