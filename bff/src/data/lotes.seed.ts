@@ -3,8 +3,14 @@ import { Lote, SituacaoLote } from '../types/lote.types';
 const situacoes: SituacaoLote[] = ['ABERTO', 'ENVIADO', 'CONFIRMADO'];
 const instituicoes = ['Banco Brasil', 'Caixa Econômica', 'Itaú Unibanco', 'Santander Brasil'];
 const instituicoesResponsaveis = ['Central Finanças', 'Compliance', 'Gestão de Risco', 'Operações'];
-const usuariosRegistro = ['ana.silva', 'bruno.ramos', 'carla.melo', 'douglas.sousa'];
-const usuariosAprovacao = ['ednaldo.k', 'fernanda.p', 'guilherme.n', 'helena.t'];
+const usuariosRegistro = [
+  'ana.silva',
+  'bruno.ramos',
+  'carla.melo',
+  'douglas.sousa',
+  'jared.ricioli',
+];
+const usuariosAprovacao = ['ednaldo.k', 'fernanda.p', 'guilherme.n', 'helena.t', 'jared.ricioli'];
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const BRAZIL_OFFSET_MINUTES = -3 * 60;
 

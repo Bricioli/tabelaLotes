@@ -4,7 +4,19 @@ Requisitos das Especificações do Teste:
 
 1. Massa de Dados:
    - Gere em memória uma lista determinística de exatamente 5.000 lotes.
-   - Campos de cada Lote: id (number), codigoLote (string 'LOT-XXXX'), valor (number), dataCriacao (ISO string), situacao ('ATIVO' | 'PROCESSANDO' | 'CANCELADO' | 'CONCLUIDO'), quantidadeItens (number).
+   - **Campos de cada Lote (`Lote`):**
+   - `id`: `number`
+   - `codigoLote`: `string` (Formato `'LOT-XXXX'`)
+   - `valor`: `number`
+   - `dataCriacao`: `string` (ISO 8601 com offset `-03:00`)
+   - `quantidadeLancamentos`: `number`
+   - `usuarioRegistro`: `string`
+   - `usuarioAprovacao`: `string`
+   - `situacao`: `'ABERTO' | 'ENVIADO' | 'CONFIRMADO'`
+   - `dataHoraSituacaoLote`: `string` (ISO 8601 com offset `-03:00`)
+   - `instituicao`: `string`
+   - `instituicaoResponsavel`: `string`
+   - `quantidadeItens`: `number`
 
 2. Middleware de Hostilidade do BFF (Requisito Crítico):
    - Crie o middleware 'hostility.middleware.ts' que lê as variáveis LATENCY_MS (3000) e FAILURE_RATE (0.2).
