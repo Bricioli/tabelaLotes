@@ -56,26 +56,63 @@ describe('LoteRepository', () => {
     const promise = firstValueFrom(
       repository.searchLotes(
         {
-          codigoLote: 'LOT-1234',
-          situacao: 'ATIVO',
+          instituicaoResponsavel: 'Responsável A',
+          instituicao: 'Instituição B',
+          situacaoLote: 'ABERTO',
+          idLoteMin: 1,
+          idLoteMax: 100,
           valorMinimo: 100,
           valorMaximo: 500,
-          dataInicio: '2026-01-01',
-          dataFim: '2026-12-31',
+          dataEntradaInicio: '2026-01-01',
+          dataEntradaFim: '2026-12-31',
         },
         2,
-        20
-      )
+        20,
+      ),
     );
 
-    const request = httpMock.expectOne(
-      '/api/v1/lotes?page=2&limit=20&codigoLote=LOT-1234&situacao=ATIVO&valorMinimo=100&valorMaximo=500&dataInicio=2026-01-01&dataFim=2026-12-31'
-    );
+    const request = httpMock.expectOne((req) => {
+      if (req.url !== '/api/v1/lotes') return false;
+      if (req.params.get('page') !== '2') return false;
+      if (req.params.get('limit') !== '20') return false;
+      if (req.params.get('instituicaoResponsavel') !== 'Responsável A') return false;
+      if (req.params.get('instituicao') !== 'Instituição B') return false;
+      if (req.params.get('situacao') !== 'ABERTO') return false;
+      if (req.params.get('idLoteMin') !== '1') return false;
+      if (req.params.get('idLoteMax') !== '100') return false;
+      if (req.params.get('valorMinimo') !== '100') return false;
+      if (req.params.get('valorMaximo') !== '500') return false;
+      if (req.params.get('dataEntradaInicio') !== '2026-01-01') return false;
+      if (req.params.get('dataEntradaFim') !== '2026-12-31') return false;
+      return true;
+    });
     request.flush({ data: [], total: 0, page: 2, totalPages: 1 });
 
     const response = await promise;
 
     expect(response.page).toBe(2);
     expect(response.totalPages).toBe(1);
+  });
+
+  it('should omit TODAS situacao from query params', async () => {
+    const promise = firstValueFrom(
+      repository.searchLotes(
+        {
+          situacaoLote: 'TODAS',
+        },
+        1,
+        10,
+      ),
+    );
+
+    const request = httpMock.expectOne((req) => {
+      if (req.url !== '/api/v1/lotes') return false;
+      return !req.params.has('situacao');
+    });
+    request.flush({ data: [], total: 0, page: 1, totalPages: 1 });
+
+    const response = await promise;
+
+    expect(response.total).toBe(0);
   });
 });

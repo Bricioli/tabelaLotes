@@ -21,7 +21,7 @@ Requisitos de Arquitetura e Negócio:
    - Topo: MatExpansionPanel recolhível contendo o formulário de filtro reativo (Código, Situação, Faixa de Valor Min/Max e Faixa de Datas com MatDatepicker). Inclua validador customizado de faixa (De <= Até).
    - Barra de Ações: Botões MatButton "Pesquisar", "Limpar", "Alterar", "Excluir" e "Visualizar". Vincule o estado [disabled] dos botões de ação à Signal Computed 'canAlterarOuExcluir'.
    - Tabela: MatTable com MatPaginator. Exiba os dados formatados (Moeda BRL, Data pt-BR, Badge de Situação com cores do Material).
-   - Feedbacks Visuais: Exiba MatProgressBar ou Spinner durante 'isLoading'. Caso ocorra erro 5xx após as tentativas do Backoff Exponencial, exiba um banner de erro reativo informando a instabilidade com botão de "Tentar Novamente".
+   - Feedbacks Visuais: Exiba Spinner durante 'isLoading'. Caso ocorra erro 5xx após as tentativas do Backoff Exponencial, exiba um banner de erro reativo informando a instabilidade com botão de "Tentar Novamente".
 
 4. Testes Unitários Relevantes (Risk-Based Testing):
    - Crie os testes .spec.ts focando exclusivamente no Core de negócio:
