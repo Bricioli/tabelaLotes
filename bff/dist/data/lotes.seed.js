@@ -7,12 +7,27 @@ const instituicoesResponsaveis = ['Central Finanças', 'Compliance', 'Gestão de
 const usuariosRegistro = ['ana.silva', 'bruno.ramos', 'carla.melo', 'douglas.sousa'];
 const usuariosAprovacao = ['ednaldo.k', 'fernanda.p', 'guilherme.n', 'helena.t'];
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const BRAZIL_OFFSET_MINUTES = -3 * 60;
+const pad = (value, length = 2) => String(value).padStart(length, '0');
+const formatBrazilianDateTime = (epochMs, includeMilliseconds = true) => {
+    const brazilEpoch = epochMs + BRAZIL_OFFSET_MINUTES * 60 * 1000;
+    const date = new Date(brazilEpoch);
+    const year = date.getUTCFullYear();
+    const month = pad(date.getUTCMonth() + 1);
+    const day = pad(date.getUTCDate());
+    const hours = pad(date.getUTCHours());
+    const minutes = pad(date.getUTCMinutes());
+    const seconds = pad(date.getUTCSeconds());
+    const milliseconds = pad(date.getUTCMilliseconds(), 3);
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${includeMilliseconds ? `.${milliseconds}` : ''}-03:00`;
+};
 const createLote = (index) => {
     const id = index + 1;
     const situacao = situacoes[(id - 1) % situacoes.length];
-    const dataCriacao = new Date(Date.UTC(2024, 0, 1) + (id - 1) * MS_PER_DAY).toISOString();
-    const createdAtDate = new Date(dataCriacao);
-    const dataHoraSituacaoLote = new Date(createdAtDate.getTime() + ((id % 24) * 60 + 30) * 60 * 1000).toISOString();
+    const brazilMidnightUtc = Date.UTC(2024, 0, 1, 3, 0, 0, 0);
+    const dataCriacaoEpoch = brazilMidnightUtc + (id - 1) * MS_PER_DAY;
+    const dataCriacao = formatBrazilianDateTime(dataCriacaoEpoch);
+    const dataHoraSituacaoLote = formatBrazilianDateTime(dataCriacaoEpoch + ((id % 24) * 60 + 30) * 60 * 1000);
     return {
         id,
         codigoLote: `LOT-${String(id).padStart(4, '0')}`,

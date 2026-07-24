@@ -2,16 +2,72 @@ import { Lote, PaginatedResponse } from '../types/lote.types';
 import { ListLotesQueryDto } from '../dto/list-lotes-query.dto';
 import { lotesDataService } from './lotes-data.service';
 
+const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const ISO_DATE_TIME_WITHOUT_ZONE_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?$/;
+const BRAZIL_TIMEZONE_OFFSET_HOURS = 3;
+
+const normalizeQueryDate = (value: string): string => {
+  const trimmed = value.trim();
+
+  if (DATE_ONLY_PATTERN.test(trimmed)) {
+    return trimmed;
+  }
+
+  if (ISO_DATE_TIME_WITHOUT_ZONE_PATTERN.test(trimmed)) {
+    return `${trimmed}Z`;
+  }
+
+  return trimmed;
+};
+
+const parseQueryDate = (value: string): number | undefined => {
+  const normalized = normalizeQueryDate(value);
+  const parsed = Date.parse(normalized);
+  return Number.isNaN(parsed) ? undefined : parsed;
+};
+
+const parseQueryDateStart = (value: string): number | undefined => {
+  if (DATE_ONLY_PATTERN.test(value.trim())) {
+    const [yearPart, monthPart, dayPart] = value.split('-');
+    const year = Number(yearPart);
+    const month = Number(monthPart);
+    const day = Number(dayPart);
+    return Date.UTC(year, month - 1, day, BRAZIL_TIMEZONE_OFFSET_HOURS, 0, 0, 0);
+  }
+
+  return parseQueryDate(value);
+};
+
+const parseQueryDateEnd = (value: string): number | undefined => {
+  if (DATE_ONLY_PATTERN.test(value.trim())) {
+    const [yearPart, monthPart, dayPart] = value.split('-');
+    const year = Number(yearPart);
+    const month = Number(monthPart);
+    const day = Number(dayPart);
+    return Date.UTC(year, month - 1, day + 1, BRAZIL_TIMEZONE_OFFSET_HOURS - 1, 59, 59, 999);
+  }
+
+  return parseQueryDate(value);
+};
+
 export class LotesService {
   private readonly dataService = lotesDataService;
 
   public list(query: ListLotesQueryDto): PaginatedResponse<Lote> {
+    const startTime = query.dataEntradaInicio
+      ? parseQueryDateStart(query.dataEntradaInicio)
+      : undefined;
+    const endTime = query.dataEntradaFim ? parseQueryDateEnd(query.dataEntradaFim) : undefined;
+
     const filtered = this.dataService.getAll().filter((lote: Lote): boolean => {
       if (query.situacao && lote.situacao !== query.situacao) {
         return false;
       }
 
-      if (query.codigoLote && !lote.codigoLote.toLowerCase().includes(query.codigoLote.toLowerCase())) {
+      if (
+        query.codigoLote &&
+        !lote.codigoLote.toLowerCase().includes(query.codigoLote.toLowerCase())
+      ) {
         return false;
       }
 
@@ -23,20 +79,28 @@ export class LotesService {
         return false;
       }
 
-      if (query.instituicao && !lote.instituicao.toLowerCase().includes(query.instituicao.toLowerCase())) {
+      if (
+        query.instituicao &&
+        !lote.instituicao.toLowerCase().includes(query.instituicao.toLowerCase())
+      ) {
         return false;
       }
 
-      if (query.instituicaoResponsavel && !lote.instituicaoResponsavel.toLowerCase().includes(query.instituicaoResponsavel.toLowerCase())) {
+      if (
+        query.instituicaoResponsavel &&
+        !lote.instituicaoResponsavel
+          .toLowerCase()
+          .includes(query.instituicaoResponsavel.toLowerCase())
+      ) {
         return false;
       }
 
       const createdAt = Date.parse(lote.dataCriacao);
-      if (query.dataEntradaInicio && createdAt < Date.parse(query.dataEntradaInicio)) {
+      if (startTime !== undefined && createdAt < startTime) {
         return false;
       }
 
-      if (query.dataEntradaFim && createdAt > Date.parse(query.dataEntradaFim)) {
+      if (endTime !== undefined && createdAt > endTime) {
         return false;
       }
 
@@ -51,7 +115,9 @@ export class LotesService {
       return true;
     });
 
-    const sorted = query.sortBy ? this.sortLotes(filtered, query.sortBy, query.sortDirection ?? 'asc') : filtered;
+    const sorted = query.sortBy
+      ? this.sortLotes(filtered, query.sortBy, query.sortDirection ?? 'asc')
+      : filtered;
     const total = sorted.length;
     const limit = query.limit;
     const page = query.page;
@@ -63,7 +129,7 @@ export class LotesService {
       data,
       total,
       page,
-      totalPages
+      totalPages,
     };
   }
 
@@ -94,7 +160,10 @@ export class LotesService {
     });
   }
 
-  public update(id: number, update: Partial<Pick<Lote, 'valor' | 'situacao' | 'quantidadeItens'>>): Lote | undefined {
+  public update(
+    id: number,
+    update: Partial<Pick<Lote, 'valor' | 'situacao' | 'quantidadeItens'>>,
+  ): Lote | undefined {
     return this.dataService.update(id, update);
   }
 

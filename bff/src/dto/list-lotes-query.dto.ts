@@ -30,7 +30,8 @@ const allowedSortFields = [
   'dataHoraSituacaoLote',
 ];
 
-const isNonEmptyString = (value: unknown): value is string => typeof value === 'string' && value.trim().length > 0;
+const isNonEmptyString = (value: unknown): value is string =>
+  typeof value === 'string' && value.trim().length > 0;
 
 const parseInteger = (value: string, name: string, errors: string[]): number | undefined => {
   const parsed = Number.parseInt(value, 10);
@@ -50,10 +51,26 @@ const parseFloatValue = (value: string, name: string, errors: string[]): number 
   return parsed;
 };
 
-const isIsoDateString = (value: string): boolean => !Number.isNaN(Date.parse(value));
+const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const ISO_DATE_TIME_PATTERN =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})?$/;
+
+const isIsoDateString = (value: string): boolean => {
+  const trimmed = value.trim();
+
+  if (DATE_ONLY_PATTERN.test(trimmed)) {
+    return true;
+  }
+
+  if (!ISO_DATE_TIME_PATTERN.test(trimmed)) {
+    return false;
+  }
+
+  return !Number.isNaN(Date.parse(trimmed));
+};
 
 export const parseListLotesQuery = (
-  query: Record<string, string | undefined>
+  query: Record<string, string | undefined>,
 ): { dto?: ListLotesQueryDto; errors: string[] } => {
   const errors: string[] = [];
 
@@ -88,10 +105,18 @@ export const parseListLotesQuery = (
     errors.push('dataEntradaFim deve ser uma data ISO válida');
   }
 
-  const idLoteMin = query.idLoteMin ? parseInteger(query.idLoteMin, 'idLoteMin', errors) : undefined;
-  const idLoteMax = query.idLoteMax ? parseInteger(query.idLoteMax, 'idLoteMax', errors) : undefined;
-  const valorMinimo = query.valorMinimo ? parseFloatValue(query.valorMinimo, 'valorMinimo', errors) : undefined;
-  const valorMaximo = query.valorMaximo ? parseFloatValue(query.valorMaximo, 'valorMaximo', errors) : undefined;
+  const idLoteMin = query.idLoteMin
+    ? parseInteger(query.idLoteMin, 'idLoteMin', errors)
+    : undefined;
+  const idLoteMax = query.idLoteMax
+    ? parseInteger(query.idLoteMax, 'idLoteMax', errors)
+    : undefined;
+  const valorMinimo = query.valorMinimo
+    ? parseFloatValue(query.valorMinimo, 'valorMinimo', errors)
+    : undefined;
+  const valorMaximo = query.valorMaximo
+    ? parseFloatValue(query.valorMaximo, 'valorMaximo', errors)
+    : undefined;
 
   if (idLoteMin !== undefined && idLoteMax !== undefined && idLoteMin > idLoteMax) {
     errors.push('idLoteMin não pode ser maior que idLoteMax');
@@ -109,7 +134,7 @@ export const parseListLotesQuery = (
 
   const dto: ListLotesQueryDto = {
     page,
-    limit
+    limit,
   };
 
   if (situacao) {
@@ -161,11 +186,11 @@ export const parseListLotesQuery = (
 
   const sortDirectionValue = query.sortDirection?.trim().toLowerCase();
   if (sortDirectionValue === 'asc' || sortDirectionValue === 'desc') {
-    dto.sortDirection = sortDirectionValue as 'asc' | 'desc';
+    dto.sortDirection = sortDirectionValue;
   }
 
   return {
     dto,
-    errors
+    errors,
   };
 };

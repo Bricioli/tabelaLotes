@@ -30,7 +30,18 @@ const parseFloatValue = (value, name, errors) => {
     }
     return parsed;
 };
-const isIsoDateString = (value) => !Number.isNaN(Date.parse(value));
+const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const ISO_DATE_TIME_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})?$/;
+const isIsoDateString = (value) => {
+    const trimmed = value.trim();
+    if (DATE_ONLY_PATTERN.test(trimmed)) {
+        return true;
+    }
+    if (!ISO_DATE_TIME_PATTERN.test(trimmed)) {
+        return false;
+    }
+    return !Number.isNaN(Date.parse(trimmed));
+};
 const parseListLotesQuery = (query) => {
     const errors = [];
     const page = query.page ? parseInteger(query.page, 'page', errors) : 1;
