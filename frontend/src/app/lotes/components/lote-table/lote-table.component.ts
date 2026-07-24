@@ -8,10 +8,18 @@ import { MatTableModule } from '@angular/material/table';
 
 import { LoteStore } from '../../store/lote.store';
 import { Lote } from '../../models/lote.model';
+import { LoteSortField } from '../../services/lote.repository';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatCheckboxModule, MatBadgeModule, MatSortModule],
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatCheckboxModule,
+    MatBadgeModule,
+    MatSortModule,
+  ],
   selector: 'app-lote-table',
   templateUrl: './lote-table.component.html',
   styleUrls: ['./lote-table.component.scss'],
@@ -61,10 +69,15 @@ export class LoteTableComponent {
       return;
     }
     const direction = sortState.direction || 'asc';
-    this.store.setSort(sortState.active as any, direction);
+    this.store.setSort(sortState.active as LoteSortField, direction);
   }
 
+  // getBadgeClass(situacao: string): string {
+  //   return situacao.toLowerCase();
+  // }
+
   getBadgeClass(situacao: string): string {
-    return situacao.toLowerCase();
+    if (!situacao) return '';
+    return situacao.toUpperCase().trim(); // Garante que retorna em MAIÚSCULO (ex: "ABERTO")
   }
 }

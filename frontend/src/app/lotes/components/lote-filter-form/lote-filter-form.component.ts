@@ -1,18 +1,37 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
+import { provideLuxonDateAdapter } from '@angular/material-luxon-adapter';
 import { MatSelectModule } from '@angular/material/select';
-
+import { DateTime } from 'luxon';
 import { LoteStore } from '../../store/lote.store';
 import { rangeValidator } from '../../validators/range.validator';
 import { LoteSituacao, situacoesDisponiveis } from '../../models/lote.model';
 import { LoteFilter } from '../../models/lote-filter.model';
+
+export const BR_LUXON_FORMATS = {
+  parse: {
+    dateInput: 'dd/MM/yyyy',
+  },
+  display: {
+    dateInput: 'dd/MM/yyyy',
+    monthYearLabel: 'MMM yyyy',
+    dateA11yLabel: 'dd/MM/yyyy',
+    monthYearA11yLabel: 'MMMM yyyy',
+  },
+};
 
 @Component({
   standalone: true,
@@ -27,6 +46,11 @@ import { LoteFilter } from '../../models/lote-filter.model';
     MatNativeDateModule,
     MatButtonModule,
   ],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
+    // Injeta o adapter com os formatos definidos
+    provideLuxonDateAdapter(BR_LUXON_FORMATS),
+  ],
   selector: 'app-lote-filter-form',
   templateUrl: './lote-filter-form.component.html',
   styleUrls: ['./lote-filter-form.component.scss'],
@@ -36,12 +60,15 @@ export class LoteFilterFormComponent implements OnInit {
   readonly form: FormGroup;
   panelExpanded = true;
 
-  constructor(private readonly fb: FormBuilder, private readonly store: LoteStore) {
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly store: LoteStore,
+  ) {
     this.form = this.fb.group(
       {
         instituicaoResponsavel: [''],
         instituicao: [''],
-        situacaoLote: ['TODAS', Validators.required],
+        situacaoLote: ['TODAS', (control: AbstractControl) => Validators.required(control)],
         idLoteMin: [null],
         idLoteMax: [null],
         valorMinimo: [null],
@@ -55,7 +82,7 @@ export class LoteFilterFormComponent implements OnInit {
           rangeValidator('valorMinimo', 'valorMaximo'),
           rangeValidator('dataEntradaInicio', 'dataEntradaFim'),
         ],
-      }
+      },
     );
   }
 
@@ -69,8 +96,12 @@ export class LoteFilterFormComponent implements OnInit {
       idLoteMax: filtroAtual.idLoteMax ?? null,
       valorMinimo: filtroAtual.valorMinimo ?? null,
       valorMaximo: filtroAtual.valorMaximo ?? null,
-      dataEntradaInicio: filtroAtual.dataEntradaInicio ? new Date(filtroAtual.dataEntradaInicio) : null,
-      dataEntradaFim: filtroAtual.dataEntradaFim ? new Date(filtroAtual.dataEntradaFim) : null,
+      dataEntradaInicio: filtroAtual.dataEntradaInicio
+        ? DateTime.fromISO(filtroAtual.dataEntradaInicio)
+        : null,
+      dataEntradaFim: filtroAtual.dataEntradaFim
+        ? DateTime.fromISO(filtroAtual.dataEntradaFim)
+        : null,
     });
   }
 
@@ -87,8 +118,8 @@ export class LoteFilterFormComponent implements OnInit {
       idLoteMax?: number;
       valorMinimo?: number;
       valorMaximo?: number;
-      dataEntradaInicio?: Date | null;
-      dataEntradaFim?: Date | null;
+      dataEntradaInicio?: DateTime | null;
+      dataEntradaFim?: DateTime | null;
     };
 
     const nextFilter: LoteFilter = {
@@ -99,8 +130,10 @@ export class LoteFilterFormComponent implements OnInit {
       idLoteMax: raw.idLoteMax ?? undefined,
       valorMinimo: raw.valorMinimo ?? undefined,
       valorMaximo: raw.valorMaximo ?? undefined,
-      dataEntradaInicio: raw.dataEntradaInicio ? raw.dataEntradaInicio.toISOString().slice(0, 10) : undefined,
-      dataEntradaFim: raw.dataEntradaFim ? raw.dataEntradaFim.toISOString().slice(0, 10) : undefined,
+      dataEntradaInicio: raw.dataEntradaInicio
+        ? raw.dataEntradaInicio.toString().slice(0, 10)
+        : undefined,
+      dataEntradaFim: raw.dataEntradaFim ? raw.dataEntradaFim.toString().slice(0, 10) : undefined,
     };
 
     this.store.updateFiltro(nextFilter);

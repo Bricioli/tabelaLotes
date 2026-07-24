@@ -6,6 +6,7 @@ import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@a
 import { routes } from './app.routes';
 import { ErrorInterceptor } from './lotes/interceptors/error.interceptor';
 import { LoadingInterceptor } from './lotes/interceptors/loading.interceptor';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,5 +23,6 @@ export const appConfig: ApplicationConfig = {
       useClass: ErrorInterceptor,
       multi: true,
     },
+    [{ provide: MAT_DATE_LOCALE, useValue: 'pt-BR' }],
   ],
 };

@@ -9,7 +9,14 @@ import { LoteStore } from '../../store/lote.store';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, LoteFilterFormComponent, LoteActionsBarComponent, LoteTableComponent],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    LoteFilterFormComponent,
+    LoteActionsBarComponent,
+    LoteTableComponent,
+  ],
   selector: 'app-lote-management-page',
   templateUrl: './lote-management-page.component.html',
   styleUrls: ['./lote-management-page.component.scss'],
@@ -17,7 +24,7 @@ import { LoteStore } from '../../store/lote.store';
 export class LoteManagementPage implements OnInit {
   constructor(
     public readonly store: LoteStore,
-    @Inject(PLATFORM_ID) private readonly platformId: Object
+    @Inject(PLATFORM_ID) private readonly platformId: object,
   ) {}
 
   ngOnInit(): void {

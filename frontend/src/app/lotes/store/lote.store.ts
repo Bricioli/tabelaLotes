@@ -31,27 +31,29 @@ export class LoteStore {
   readonly hasSingleSelection = computed(() => this.selectedCount() === 1);
   readonly canAlterarOuExcluir = computed(() => this.hasSingleSelection());
 
-  private readonly searchRequests = new Subject<SearchRequest>();
-  private readonly destroy$ = new Subject<void>();
+  private readonly _searchRequests = new Subject<SearchRequest>();
+  private readonly _destroy$ = new Subject<void>();
 
   constructor(
-    private readonly repository: LoteRepository,
-    private readonly httpState: HttpStateService,
-    private readonly ngZone: NgZone
+    private readonly _repository: LoteRepository,
+    private readonly _httpState: HttpStateService,
+    private readonly _ngZone: NgZone,
   ) {
-    this.isLoading = computed(() => this.httpState.isLoading());
-    this.hasError = computed(() => this.httpState.hasError());
+    this.isLoading = computed(() => this._httpState.isLoading());
+    this.hasError = computed(() => this._httpState.hasError());
 
-    this.searchRequests
+    this._searchRequests
       .pipe(
-        tap(() => this.httpState.clearError()),
+        tap(() => this._httpState.clearError()),
         switchMap(({ filter, page, limit, sortField, sortDirection }) =>
-          this.repository.searchLotes(filter, page, limit, sortField ?? undefined, sortDirection ?? undefined).pipe(
-            tap((pageData) => this.applyPage(pageData)),
-            catchError(() => EMPTY)
-          )
+          this._repository
+            .searchLotes(filter, page, limit, sortField ?? undefined, sortDirection ?? undefined)
+            .pipe(
+              tap((pageData) => this.applyPage(pageData)),
+              catchError(() => EMPTY),
+            ),
         ),
-        takeUntil(this.destroy$)
+        takeUntil(this._destroy$),
       )
       .subscribe();
   }
@@ -59,7 +61,7 @@ export class LoteStore {
   loadLotes(page = this.paginaAtual(), limit = this.pageSize()): void {
     this.paginaAtual.set(page);
     this.pageSize.set(limit);
-    this.searchRequests.next({
+    this._searchRequests.next({
       filter: this.filtroAtual(),
       page,
       limit,
@@ -136,7 +138,7 @@ export class LoteStore {
   }
 
   private applyPage(pageData: LotesPage): void {
-    this.ngZone.run(() => {
+    this._ngZone.run(() => {
       this.lotes.set(pageData.data);
       this.totalElementos.set(pageData.total);
       this.paginaAtual.set(pageData.page);
