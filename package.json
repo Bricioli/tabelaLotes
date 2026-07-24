@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "prepare": "husky",
+    "test": "npm test --prefix frontend -- --watch=false && npm test --prefix bff",
     "lint": "eslint \"frontend/src/**/*.ts\" \"bff/src/**/*.ts\"",
     "lint:fix": "eslint \"frontend/src/**/*.ts\" \"bff/src/**/*.ts\" --fix",
     "format": "prettier --write \"**/*.{ts,js,json,md,yml,yaml,html,scss}\""

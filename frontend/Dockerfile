@@ -6,7 +6,9 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
+RUN npm test --watch=false --browsers=ChromeHeadless
 RUN npm run build
+
 
 FROM nginx:alpine AS production
 

@@ -59,7 +59,7 @@ const isIsoDateString = (value: string): boolean => {
   const trimmed = value.trim();
 
   if (DATE_ONLY_PATTERN.test(trimmed)) {
-    return true;
+    return !Number.isNaN(Date.parse(trimmed));
   }
 
   if (!ISO_DATE_TIME_PATTERN.test(trimmed)) {
