@@ -1,0 +1,20 @@
+<div class="page-shell">
+  <mat-card class="management-card">
+    <div class="page-header">
+      <div>
+        <nav class="breadcrumb">Início &gt; Outros Créditos/Débitos</nav>
+        <h1>Outros Créditos/Débitos</h1>
+      </div>
+      <p>Pesquise e gerencie os lançamentos por filtro, seleção e ação.</p>
+    </div>
+
+    <div class="error-banner" *ngIf="store.hasError()">
+      <span>Instabilidade detectada. Verifique a conexão ou tente novamente.</span>
+      <button mat-raised-button color="accent" (click)="retry()">Tentar Novamente</button>
+    </div>
+
+    <app-lote-filter-form></app-lote-filter-form>
+    <app-lote-actions-bar></app-lote-actions-bar>
+    <app-lote-table></app-lote-table>
+  </mat-card>
+</div>

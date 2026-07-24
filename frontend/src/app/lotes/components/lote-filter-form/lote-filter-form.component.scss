@@ -1,0 +1,77 @@
+.filter-panel {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+.filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.filter-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.range-row {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.filter-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+.range-error {
+  color: #d32f2f;
+  margin: 0;
+  font-size: 0.95rem;
+}
+mat-panel-description {
+  flex-grow: 0 !important;
+}
+
+.filter-container {
+  display: flex;
+  flex-direction: row; // As duas grandes colunas lado a lado
+  gap: 24px; // Espaçamento entre Coluna 1 e Coluna 2
+  width: 100%;
+
+  // Responsividade: em telas pequenas (mobile), vira uma coluna só
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.filter-column {
+  display: flex;
+  flex-direction: column; // Organiza os campos na vertical dentro da coluna
+  flex: 1; // Garante que Coluna 1 e Coluna 2 dividam o espaço igualmente (50% cada)
+  gap: 8px;
+}
+
+// Sub-linhas para colocar "De" e "Até" lado a lado na coluna da direita
+.range-row {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+
+  mat-form-field {
+    flex: 1; // Cada input (De e Até) ocupa metade da sub-linha
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.actions-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  gap: 0.75rem;
+  button {
+    border-radius: 5px !important;
+  }
+}

@@ -1,0 +1,84 @@
+<mat-expansion-panel class="filter-panel" [expanded]="panelExpanded">
+  <mat-expansion-panel-header>
+    <mat-panel-title>Filtros</mat-panel-title>
+  </mat-expansion-panel-header>
+  <form [formGroup]="form" class="filter-form" (ngSubmit)="search()">
+    <div class="filter-container">
+      <!-- COLUNA 1: ESQUERDA -->
+      <div class="filter-column">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Instituição Resp.</mat-label>
+          <input matInput formControlName="instituicaoResponsavel" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Instituição</mat-label>
+          <input matInput formControlName="instituicao" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Situação Lote</mat-label>
+          <mat-select formControlName="situacaoLote">
+            <mat-option *ngFor="let situacao of situacoes" [value]="situacao">
+              {{ situacao }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- COLUNA 2: DIREITA (FAIXAS DE/ATÊ) -->
+      <div class="filter-column">
+        <!-- Linha do ID Lote (De / Até lado a lado) -->
+        <div class="range-row">
+          <mat-form-field appearance="outline">
+            <mat-label>ID Lote De</mat-label>
+            <input matInput type="number" formControlName="idLoteMin" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>ID Lote Até</mat-label>
+            <input matInput type="number" formControlName="idLoteMax" />
+          </mat-form-field>
+        </div>
+
+        <!-- Linha do Valor Lote (De / Até) -->
+        <div class="range-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Valor Lote De</mat-label>
+            <input matInput type="number" formControlName="valorMinimo" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Valor Lote Até</mat-label>
+            <input matInput type="number" formControlName="valorMaximo" />
+          </mat-form-field>
+        </div>
+
+        <!-- Linha da Data Entrada (De / Até) -->
+        <div class="range-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Data Entrada De</mat-label>
+            <input matInput [matDatepicker]="startDatePicker" formControlName="dataEntradaInicio" />
+            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #startDatePicker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Data Entrada Até</mat-label>
+            <input matInput [matDatepicker]="endDatePicker" formControlName="dataEntradaFim" />
+            <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #endDatePicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ações do Formulário -->
+    <div class="actions-row">
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
+        Pesquisar
+      </button>
+      <button mat-stroked-button type="button" (click)="clear()">Limpar</button>
+    </div>
+    <p *ngIf="form.hasError('rangeInvalid')" class="range-error">
+      Um ou mais intervalos estão incorretos. Verifique se o valor "De" é menor ou igual ao "Até".
+    </p>
+  </form>
+</mat-expansion-panel>
