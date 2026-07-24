@@ -2,9 +2,49 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.lotesService = exports.LotesService = void 0;
 const lotes_data_service_1 = require("./lotes-data.service");
+const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const ISO_DATE_TIME_WITHOUT_ZONE_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?$/;
+const BRAZIL_TIMEZONE_OFFSET_HOURS = 3;
+const normalizeQueryDate = (value) => {
+    const trimmed = value.trim();
+    if (DATE_ONLY_PATTERN.test(trimmed)) {
+        return trimmed;
+    }
+    if (ISO_DATE_TIME_WITHOUT_ZONE_PATTERN.test(trimmed)) {
+        return `${trimmed}Z`;
+    }
+    return trimmed;
+};
+const parseQueryDate = (value) => {
+    const normalized = normalizeQueryDate(value);
+    const parsed = Date.parse(normalized);
+    return Number.isNaN(parsed) ? undefined : parsed;
+};
+const parseQueryDateStart = (value) => {
+    if (DATE_ONLY_PATTERN.test(value.trim())) {
+        const [yearPart, monthPart, dayPart] = value.split('-');
+        const year = Number(yearPart);
+        const month = Number(monthPart);
+        const day = Number(dayPart);
+        return Date.UTC(year, month - 1, day, BRAZIL_TIMEZONE_OFFSET_HOURS, 0, 0, 0);
+    }
+    return parseQueryDate(value);
+};
+const parseQueryDateEnd = (value) => {
+    if (DATE_ONLY_PATTERN.test(value.trim())) {
+        const [yearPart, monthPart, dayPart] = value.split('-');
+        const year = Number(yearPart);
+        const month = Number(monthPart);
+        const day = Number(dayPart);
+        return Date.UTC(year, month - 1, day + 1, BRAZIL_TIMEZONE_OFFSET_HOURS - 1, 59, 59, 999);
+    }
+    return parseQueryDate(value);
+};
 class LotesService {
     dataService = lotes_data_service_1.lotesDataService;
     list(query) {
+        const startTime = query.dataEntradaInicio ? parseQueryDateStart(query.dataEntradaInicio) : undefined;
+        const endTime = query.dataEntradaFim ? parseQueryDateEnd(query.dataEntradaFim) : undefined;
         const filtered = this.dataService.getAll().filter((lote) => {
             if (query.situacao && lote.situacao !== query.situacao) {
                 return false;
@@ -25,10 +65,10 @@ class LotesService {
                 return false;
             }
             const createdAt = Date.parse(lote.dataCriacao);
-            if (query.dataEntradaInicio && createdAt < Date.parse(query.dataEntradaInicio)) {
+            if (startTime !== undefined && createdAt < startTime) {
                 return false;
             }
-            if (query.dataEntradaFim && createdAt > Date.parse(query.dataEntradaFim)) {
+            if (endTime !== undefined && createdAt > endTime) {
                 return false;
             }
             if (query.valorMinimo !== undefined && lote.valor < query.valorMinimo) {
