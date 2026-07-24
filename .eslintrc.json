@@ -3,7 +3,12 @@
   "ignorePatterns": ["node_modules/", "dist/", "out-tsc/", ".angular/"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": ["./frontend/tsconfig.app.json", "./bff/tsconfig.json"],
+    "project": [
+      "./frontend/tsconfig.app.json",
+      "./frontend/tsconfig.spec.json",
+      "./bff/tsconfig.json",
+      "./bff/tsconfig.spec.json"
+    ],
     "sourceType": "module"
   },
   "plugins": ["@typescript-eslint"],
