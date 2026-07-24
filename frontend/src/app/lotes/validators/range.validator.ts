@@ -2,8 +2,8 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 export function rangeValidator(minField: string, maxField: string): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    const minValue = control.get(minField)?.value;
-    const maxValue = control.get(maxField)?.value;
+    const minValue: unknown = control.get(minField)?.value;
+    const maxValue: unknown = control.get(maxField)?.value;
 
     if (minValue == null || maxValue == null || minValue === '' || maxValue === '') {
       return null;

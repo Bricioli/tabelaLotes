@@ -1,10 +1,16 @@
-export type SituacaoLote = 'ATIVO' | 'PROCESSANDO' | 'CANCELADO' | 'CONCLUIDO';
+export type SituacaoLote = 'ABERTO' | 'ENVIADO' | 'CONFIRMADO';
 export interface Lote {
     id: number;
     codigoLote: string;
     valor: number;
     dataCriacao: string;
+    quantidadeLancamentos: number;
+    usuarioRegistro: string;
+    usuarioAprovacao: string;
     situacao: SituacaoLote;
+    dataHoraSituacaoLote: string;
+    instituicao: string;
+    instituicaoResponsavel: string;
     quantidadeItens: number;
 }
 export interface PaginatedResponse<T> {

@@ -1,12 +1,17 @@
-export type LoteSituacao = 'ATIVO' | 'PROCESSANDO' | 'CANCELADO' | 'CONCLUIDO' | 'TODAS';
+export type LoteSituacao = 'ABERTO' | 'ENVIADO' | 'CONFIRMADO' | 'TODAS';
 
 export interface Lote {
   id: number;
   codigoLote: string;
   valor: number;
   dataCriacao: string;
+  quantidadeLancamentos: number;
+  usuarioRegistro: string;
+  usuarioAprovacao: string;
   situacao: Exclude<LoteSituacao, 'TODAS'>;
-  quantidadeItens: number;
+  dataHoraSituacaoLote: string;
+  instituicao?: string;
+  instituicaoResponsavel?: string;
 }
 
 export interface LotesPage {
@@ -16,4 +21,4 @@ export interface LotesPage {
   totalPages: number;
 }
 
-export const situacoesDisponiveis: LoteSituacao[] = ['TODAS', 'ATIVO', 'PROCESSANDO', 'CANCELADO', 'CONCLUIDO'];
+export const situacoesDisponiveis: LoteSituacao[] = ['TODAS', 'ABERTO', 'ENVIADO', 'CONFIRMADO'];

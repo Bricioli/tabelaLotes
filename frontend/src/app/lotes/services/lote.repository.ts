@@ -4,7 +4,17 @@ import { Observable, OperatorFunction, throwError, timer } from 'rxjs';
 import { mergeMap, retryWhen } from 'rxjs/operators';
 
 import { LoteFilter, loteFilterDefault } from '../models/lote-filter.model';
-import { LoteSituacao, LotesPage } from '../models/lote.model';
+import { LotesPage } from '../models/lote.model';
+
+export type LoteSortField =
+  | 'id'
+  | 'dataCriacao'
+  | 'valor'
+  | 'quantidadeLancamentos'
+  | 'usuarioRegistro'
+  | 'usuarioAprovacao'
+  | 'situacao'
+  | 'dataHoraSituacaoLote';
 
 const MAX_RETRY_ATTEMPTS = 2;
 const BACKOFF_BASE_MS = 300;
@@ -15,36 +25,37 @@ export class LoteRepository {
 
   constructor(private readonly http: HttpClient) {}
 
-  searchLotes(filter: LoteFilter = loteFilterDefault, page = 1, limit = 10): Observable<LotesPage> {
-    let params = new HttpParams().set('page', String(page)).set('limit', String(limit));
+  searchLotes(
+    filter: LoteFilter = loteFilterDefault,
+    page = 1,
+    limit = 10,
+    sortField?: LoteSortField,
+    sortDirection?: 'asc' | 'desc',
+  ): Observable<LotesPage> {
+    const rawParams: Record<string, string | number | null | undefined> = {
+      page,
+      limit,
+      instituicaoResponsavel: filter.instituicaoResponsavel,
+      instituicao: filter.instituicao,
+      situacao: filter.situacaoLote !== 'TODAS' ? filter.situacaoLote : null,
+      idLoteMin: filter.idLoteMin,
+      idLoteMax: filter.idLoteMax,
+      valorMinimo: filter.valorMinimo,
+      valorMaximo: filter.valorMaximo,
+      dataEntradaInicio: filter.dataEntradaInicio,
+      dataEntradaFim: filter.dataEntradaFim,
+      sortBy: sortField,
+      sortDirection: sortDirection,
+    };
 
-    if (filter.codigoLote) {
-      params = params.set('codigoLote', filter.codigoLote);
-    }
+    const params = Object.entries(rawParams).reduce((acc, [key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        return acc.set(key, String(value));
+      }
+      return acc;
+    }, new HttpParams());
 
-    if (filter.situacao && filter.situacao !== 'TODAS') {
-      params = params.set('situacao', filter.situacao);
-    }
-
-    if (filter.valorMinimo != null) {
-      params = params.set('valorMinimo', String(filter.valorMinimo));
-    }
-
-    if (filter.valorMaximo != null) {
-      params = params.set('valorMaximo', String(filter.valorMaximo));
-    }
-
-    if (filter.dataInicio) {
-      params = params.set('dataInicio', filter.dataInicio);
-    }
-
-    if (filter.dataFim) {
-      params = params.set('dataFim', filter.dataFim);
-    }
-
-    return this.http
-      .get<LotesPage>(this.baseUrl, { params })
-      .pipe(this.retryWithBackoff());
+    return this.http.get<LotesPage>(this.baseUrl, { params }).pipe(this.retryWithBackoff());
   }
 
   private retryWithBackoff<T>(): OperatorFunction<T, T> {
@@ -61,8 +72,8 @@ export class LoteRepository {
           const backoffTime = BACKOFF_BASE_MS * Math.pow(2, attempt);
           const jitter = Math.floor(Math.random() * 150);
           return timer(backoffTime + jitter);
-        })
-      )
+        }),
+      ),
     );
   }
 

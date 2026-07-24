@@ -4,14 +4,31 @@ export interface ListLotesQueryDto {
   page: number;
   limit: number;
   situacao?: SituacaoLote;
-  dataInicio?: string;
-  dataFim?: string;
+  idLoteMin?: number;
+  idLoteMax?: number;
   valorMinimo?: number;
   valorMaximo?: number;
+  dataEntradaInicio?: string;
+  dataEntradaFim?: string;
   codigoLote?: string;
+  instituicao?: string;
+  instituicaoResponsavel?: string;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
 }
 
-const allowedSituacoes: SituacaoLote[] = ['ATIVO', 'PROCESSANDO', 'CANCELADO', 'CONCLUIDO'];
+const allowedSituacoes: SituacaoLote[] = ['ABERTO', 'ENVIADO', 'CONFIRMADO'];
+const allowedSortFields = [
+  'id',
+  'codigoLote',
+  'dataCriacao',
+  'valor',
+  'quantidadeLancamentos',
+  'usuarioRegistro',
+  'usuarioAprovacao',
+  'situacao',
+  'dataHoraSituacaoLote',
+];
 
 const isNonEmptyString = (value: unknown): value is string => typeof value === 'string' && value.trim().length > 0;
 
@@ -61,18 +78,24 @@ export const parseListLotesQuery = (
     }
   }
 
-  const dataInicio = query.dataInicio;
+  const dataInicio = query.dataEntradaInicio;
   if (dataInicio && !isIsoDateString(dataInicio)) {
-    errors.push('dataInicio deve ser uma data ISO válida');
+    errors.push('dataEntradaInicio deve ser uma data ISO válida');
   }
 
-  const dataFim = query.dataFim;
+  const dataFim = query.dataEntradaFim;
   if (dataFim && !isIsoDateString(dataFim)) {
-    errors.push('dataFim deve ser uma data ISO válida');
+    errors.push('dataEntradaFim deve ser uma data ISO válida');
   }
 
+  const idLoteMin = query.idLoteMin ? parseInteger(query.idLoteMin, 'idLoteMin', errors) : undefined;
+  const idLoteMax = query.idLoteMax ? parseInteger(query.idLoteMax, 'idLoteMax', errors) : undefined;
   const valorMinimo = query.valorMinimo ? parseFloatValue(query.valorMinimo, 'valorMinimo', errors) : undefined;
   const valorMaximo = query.valorMaximo ? parseFloatValue(query.valorMaximo, 'valorMaximo', errors) : undefined;
+
+  if (idLoteMin !== undefined && idLoteMax !== undefined && idLoteMin > idLoteMax) {
+    errors.push('idLoteMin não pode ser maior que idLoteMax');
+  }
 
   if (valorMinimo !== undefined && valorMaximo !== undefined && valorMinimo > valorMaximo) {
     errors.push('valorMinimo não pode ser maior que valorMaximo');
@@ -93,12 +116,12 @@ export const parseListLotesQuery = (
     dto.situacao = situacao;
   }
 
-  if (dataInicio && dataInicio.trim().length > 0) {
-    dto.dataInicio = dataInicio.trim();
+  if (idLoteMin !== undefined) {
+    dto.idLoteMin = idLoteMin;
   }
 
-  if (dataFim && dataFim.trim().length > 0) {
-    dto.dataFim = dataFim.trim();
+  if (idLoteMax !== undefined) {
+    dto.idLoteMax = idLoteMax;
   }
 
   if (valorMinimo !== undefined) {
@@ -109,8 +132,36 @@ export const parseListLotesQuery = (
     dto.valorMaximo = valorMaximo;
   }
 
+  if (dataInicio && dataInicio.trim().length > 0) {
+    dto.dataEntradaInicio = dataInicio.trim();
+  }
+
+  if (dataFim && dataFim.trim().length > 0) {
+    dto.dataEntradaFim = dataFim.trim();
+  }
+
   if (isNonEmptyString(codigoLote)) {
     dto.codigoLote = codigoLote;
+  }
+
+  const instituicao = query.instituicao?.trim();
+  if (isNonEmptyString(instituicao)) {
+    dto.instituicao = instituicao;
+  }
+
+  const instituicaoResponsavel = query.instituicaoResponsavel?.trim();
+  if (isNonEmptyString(instituicaoResponsavel)) {
+    dto.instituicaoResponsavel = instituicaoResponsavel;
+  }
+
+  const sortBy = query.sortBy?.trim();
+  if (isNonEmptyString(sortBy) && allowedSortFields.includes(sortBy)) {
+    dto.sortBy = sortBy;
+  }
+
+  const sortDirectionValue = query.sortDirection?.trim().toLowerCase();
+  if (sortDirectionValue === 'asc' || sortDirectionValue === 'desc') {
+    dto.sortDirection = sortDirectionValue as 'asc' | 'desc';
   }
 
   return {

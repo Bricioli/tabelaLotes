@@ -1,11 +1,12 @@
 <div class="page-shell">
   <mat-card class="management-card">
     <div class="page-header">
-      <h1>Gestão de Lotes</h1>
-      <p>Utilize os filtros abaixo para encontrar e selecionar um lote.</p>
+      <div>
+        <nav class="breadcrumb">Início &gt; Outros Créditos/Débitos</nav>
+        <h1>Outros Créditos/Débitos</h1>
+      </div>
+      <p>Pesquise e gerencie os lançamentos por filtro, seleção e ação.</p>
     </div>
-
-    <mat-progress-bar *ngIf="store.isLoading()" mode="indeterminate"></mat-progress-bar>
 
     <div class="error-banner" *ngIf="store.hasError()">
       <span>Instabilidade detectada. Verifique a conexão ou tente novamente.</span>

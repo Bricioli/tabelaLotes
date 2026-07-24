@@ -1,1 +1,7 @@
-<router-outlet></router-outlet>
+<div class="app-shell">
+  <div class="spinner-overlay" *ngIf="httpState.isLoading()">
+    <mat-progress-spinner diameter="80" mode="indeterminate"></mat-progress-spinner>
+  </div>
+
+  <router-outlet></router-outlet>
+</div>
